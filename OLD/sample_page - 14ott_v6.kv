@@ -1,0 +1,363 @@
+#:kivy 2.1.0
+#:import utils kivy.utils
+
+# sotto windowmanager elenco tutti le pagine dell'app tra cui voglio switchare
+WindowManager:
+    
+    HomePage:
+    MasterPasswordPage:
+    FirstPage:
+    ChoicePage:
+    Lista:
+    ChoicePage2:
+    InserimentoDati:
+    VistaDati:
+
+
+<HomePage>:
+    name: 'home_page'
+
+    BoxLayout:
+        orientation:'horizontal'
+        size: root.width, root.height
+        
+        Image:
+            source: 'safe-box.png'
+
+        Button:
+            text: 'Start'
+            font_size: (root.width**2 + root.height**2) / 10**4
+            background_color: utils.get_color_from_hex('#000000')
+            on_release: root.verifica_txt()
+
+<MasterPasswordPage>:
+    name: 'MP_page'     
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:2
+
+            Label:
+                id: label_warning_mp
+                text: ''
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+            Label:
+                text: "Imposta la nuova Master Password:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_nuova_mp
+                on_text: label_warning_mp.text = '' # pulisco la label del warning
+                multiline: False
+                spacing: 10
+                size_hint: (1, 0.2)
+                password: True
+                font_size: (root.width**2 + root.height**2) / 15**4    
+            Label:
+                text: "Reinserisci la nuova Master Password:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_conferma_nuova_mp
+                multiline: False
+                spacing: 10
+                size_hint: (1, 0.2)
+                password: True
+                font_size: (root.width**2 + root.height**2) / 15**4
+        Button:
+            text: 'Conferma'
+            size_hint_y: None
+            height: 80
+            on_release: root.imposta_nuova_mp()
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4              
+        Label:
+
+<FirstPage>:
+    name: 'first_page'
+
+    BoxLayout:
+        orientation:'vertical'
+        size: root.width, root.height
+    
+        Image:
+            source: 'vault.png'
+        
+        Label:
+            id: label_welcome
+            text: "Inserisci la Master Password:"
+            size_hint: (1, 0.3)
+            font_size: (root.width**2 + root.height**2) / 14**4
+            
+        TextInput:
+            id: mp_utente
+            password: True
+            multiline: False
+            spacing: 10
+            padding: 15
+            pos_hint: {"x":0.2}
+            size_hint: (0.6,0.4)
+            font_size: (root.width**2 + root.height**2) / 13**4
+
+        Label:
+            size_hint_y: None
+            height: 30
+        Button:
+            pos_hint: {"x":0.35}
+            size_hint: (0.3,0.4)
+            text:'Conferma'
+            on_release: root.check_mp()
+            # on_release: app.root.current = 'choice_page'
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+
+        Label:
+
+<ChoicePage>:
+    name: 'choice_page'
+
+    BoxLayout:
+        orientation:'vertical'
+        size: root.width, root.height  
+        spacing: 20
+        padding: 20        
+        
+        Button:
+            text: 'Mostra gli account in rubrica'
+            on_press: root.refreshview()
+            on_release: app.root.current = 'ListaRubrica'
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+        Button:
+            text: 'Aggiungi un account'
+            on_release: app.root.current = 'inserimento_dati'
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+        Button:
+            text: 'Reimposta la Master Password'
+            on_release: root.go_to_mp_page()
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+        Button:
+            text: "Esci dall'app"
+            on_release: app.stop()
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+
+<Lista>:
+    name: 'ListaRubrica'
+
+    BoxLayout:
+        orientation:'vertical'
+        
+        ListaRubrica:
+            id: rv_list
+        Button:
+            text:'Torna alla pagina iniziale'
+            size_hint: 1 , 0.1
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 15**4
+            spacing: 20
+            on_release: 
+                app.root.current = 'choice_page'
+                root.manager.transition.direction = "right"
+
+# imposto un button customizzato da usare nella lista rubrica sotto (dove imposterò viewclass: MyButton)
+<MyButton>:
+    on_release: 
+        app.root.current = 'choice_page2'
+        # root.parent.parent.printa_account()
+
+# definisco sotto le proprietà del mio oggetto RecycleView (cioè ListaRubrica)
+<ListaRubrica>:
+    viewclass: 'MyButton'
+    
+    RecycleBoxLayout:
+        default_size: None, dp(56)
+        default_size_hint: 1, None
+        size_hint_y: None
+        height: self.minimum_height
+        orientation: 'vertical'
+
+<MyButton2>:
+    background_color: utils.get_color_from_hex('#3c6c79')
+    font_size: (root.width**2 + root.height**2) / 14**4
+
+<ChoicePage2>:
+    name: 'choice_page2'
+
+    BoxLayout:
+        orientation:'vertical'
+        size: root.width, root.height
+        spacing: 20
+        padding: 20 
+
+        MyButton2:
+            text: "Aggiorna i dati dell'account"   
+            on_release: 
+                app.root.current = 'inserimento_dati'
+        MyButton2:
+            text: "Elimina i dati dell'account"    
+            on_release: root.rimuovi_account()
+        MyButton2:
+            text: "Rivela i dati dell'account"
+            on_release: 
+                app.root.current = 'vista_dati'
+                root.manager.transition.direction = "down"
+                root.reveal()      
+        MyButton2:
+            text: "Torna alla pagina iniziale"
+            on_release: 
+                app.root.current = 'choice_page'
+                root.manager.transition.direction = "right"
+            
+
+<InserimentoDati>:
+    name: 'inserimento_dati'
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "Inserire il nome dell'account:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_account
+                multiline: False
+                spacing: 10
+                padding: 20
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Inserire il nome utente:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_username
+                multiline: False
+                spacing: 10
+                padding: 20
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Inserire la password:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_password
+                multiline: False
+                spacing: 10
+                padding: 20
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Inserire il PIN:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_pin
+                multiline: False
+                spacing: 10
+                padding: 20
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Inserire il nome utente alternativo:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            TextInput:
+                id: input_username2
+                multiline: False
+                spacing: 10
+                padding: 20
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+
+        Button:
+            text: 'Conferma'
+            size_hint_y: None
+            height: 80
+            on_release: root.aggiungi_password()
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+        Button:
+            text: 'Torna alla pagina iniziale'
+            size_hint_y: None
+            height: 80
+            on_release: 
+                app.root.current = 'choice_page'
+                root.manager.transition.direction = "right"
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
+
+<VistaDati>:
+    name: 'vista_dati'
+
+    GridLayout:
+        cols:1
+        size: root.width, root.height
+
+        Label:
+            id: label_account
+            text: "nome account"
+            size_hint: (1, 0.2)
+            font_size: (root.width**2 + root.height**2) / 14**4
+
+        GridLayout:
+            cols:2
+
+            Label:
+                text: "Username:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Button:
+                id: view_username
+                text: "xxxx"
+                background_color: utils.get_color_from_hex('#3c6c79')
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Password:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Button:
+                id: view_password
+                text: "xxxx"
+                background_color: utils.get_color_from_hex('#3c6c79')
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "PIN:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Button:
+                id: view_pin
+                text: "xxxx"
+                background_color: utils.get_color_from_hex('#3c6c79')
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Label:
+                text: "Username alternativo:"
+                size_hint: (1, 0.2)
+                font_size: (root.width**2 + root.height**2) / 14**4
+            Button:
+                id: view_username_2
+                text: "xxx"
+                background_color: utils.get_color_from_hex('#3c6c79')
+                font_size: (root.width**2 + root.height**2) / 14**4
+
+        Button:
+            text: 'Torna alla pagina iniziale'
+            size_hint_y: None
+            height: 80
+            on_release: 
+                app.root.current = 'choice_page'
+                root.manager.transition.direction = "right"
+            background_color: utils.get_color_from_hex('#928cd9')
+            font_size: (root.width**2 + root.height**2) / 14**4
